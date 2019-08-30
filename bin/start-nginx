@@ -8,12 +8,12 @@ mkfifo $psmgr
 erb config/nginx.conf.erb > config/nginx.conf
 
 n=1
-while getopts :f option ${@:1:2}
+while getopts :f option "${@:1:2}"
 do
-        case "${option}"
-        in
-                f) FORCE=$OPTIND; n=$((n+1));;
-        esac
+  case "${option}" in
+  	f) FORCE=$OPTIND; n=$((n+1));;
+		*) echo -n "an unknown number of";;
+  esac
 done
 
 #Initialize log directory.
@@ -32,7 +32,7 @@ echo 'buildpack=nginx at=logs-initialized'
 (
 	#Take the command passed to this bin and start it.
 	#E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
-        COMMAND=${@:$n}
+  COMMAND=${*:$n}
 	echo "buildpack=nginx at=start-app cmd=$COMMAND"
 	$COMMAND
 	echo 'app' >$psmgr
@@ -67,6 +67,6 @@ fi
 #to un-block. The process putting the msg into the fifo
 #will use it's process name as a msg so that we can print the offending
 #process to stdout.
-read exit_process <$psmgr
+read -r exit_process <$psmgr
 echo "buildpack=nginx at=exit process=$exit_process"
 exit 1

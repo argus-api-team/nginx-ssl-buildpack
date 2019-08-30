@@ -8,7 +8,7 @@ status() {
 set -e            # fail fast
 set -o pipefail   # dont ignore exit codes when piping output
 
-NGINX_VERSION=1.17.2
+NGINX_VERSION=1.17.3
 PCRE_VERSION=8.43
 
 nginx_tarball_url=http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
@@ -17,15 +17,14 @@ pcre_tarball_url=http://sourceforge.net/projects/pcre/files/pcre/${PCRE_VERSION}
 status "This new NEW!"
 
 root_directory=$(pwd)
-# remote: -----> /tmp/buildpack20151124-166-1ka98k6
 status "$root_directory"
-ls_1=$(ls $root_directory)
-ls_2=$(ls $root_directory/bin)
+ls_1=$(ls "$root_directory")
+ls_2=$(ls "$root_directory/bin")
 status "$ls_1"
 status "$ls_2"
 
 # change to the BUILD_DIR ($1)
-cd $1
+cd "$1"
 
 status "Downloading $nginx_tarball_url"
 curl -L $nginx_tarball_url | tar xzv
@@ -44,17 +43,13 @@ status "Installing nginx"
 make install --silent
 
 ls_3=$(pwd)
-ls_4=$(ls $ls_3)
+ls_4=$(ls "$ls_3")
 status "$ls_3"
 status "$ls_4"
 
 status "nginx-buildpack: Installed nginx-${NGINX_VERSION}"
 
 mkdir -p "$1/bin/"
-#cp "$root_directory/bin/nginx-cedar-14" "$1/bin/nginx"
-#nginx_version=$("$root_directory/bin/nginx-cedar-14" -V 2>&1 | head -1 | awk '{ print $NF }')
-#cp -r "$root_directory/nginx-$NGINX_VERSION" "$1/bin/nginx"
-#status "nginx-buildpack: Installed ${NGINX_VERSION} to app/bin"
 
 cp "$root_directory/bin/start-nginx" "$1/bin/"
 status "nginx-buildpack: Added start-nginx to app/bin"
